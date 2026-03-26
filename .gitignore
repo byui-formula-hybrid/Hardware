@@ -1,41 +1,97 @@
-# Prerequisites
-*.d
+# PlatformIO Build Artifacts
+.pio/
+.vscode/
+boards/
 
-# Compiled Object files
-*.slo
-*.lo
+# Python Virtual Environment
+.venv/
+.env
+*.env.*
+__pycache__/
+*.pyc
+*.pyo
+
+# Build directories
+**/build/
+**/dist/
+
+# Node.js (if using web dashboard)
+**/node_modules/
+package-lock.json
+.npm/
+
+# Development Tools & IDEs
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Compiler & Build Outputs
 *.o
 *.obj
+*.elf
+*.bin
+*.hex
+*.map
+*.lss
+*.sym
 
-# Precompiled Headers
-*.gch
-*.pch
+# Documentation Build
+docs/_build/
+docs/build/
+*.pdf
 
-# Linker files
-*.ilk
-
-# Debugger Files
-*.pdb
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
+# Logs & Debug Files
+*.log
 *.out
-*.app
+debug/
+logs/
 
-# debug information files
-*.dwo
+# Test Results & Coverage
+test_results/
+coverage/
+*.gcov
+*.gcda
+*.gcno
+
+# Temporary & Cache Files
+tmp/
+temp/
+*.tmp
+*.cache
+.cache/
+
+# Hardware Simulation
+*.vcd
+*.fst
+simulation/
+
+# Secrets & Credentials
+secrets.h
+credentials.json
+*.key
+*.pem
+
+# Race Car Specific
+telemetry_data/
+calibration_data/
+race_logs/
+
+# Backup Files
+*.bak
+*.backup
+*_backup.*
+
+# Archive Files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# CMake Files
+**/CMakeUserPresets.json
+
+# SDK Configurations
+sdkconfig*
