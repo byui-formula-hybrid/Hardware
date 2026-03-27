@@ -6,4 +6,4 @@ int main(void) {
     
 }
 
-#endif
+#endif // ENV_STM32

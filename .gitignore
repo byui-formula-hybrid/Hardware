@@ -91,6 +91,7 @@ race_logs/
 
 # CMake Files
 **/CMakeUserPresets.json
+CMakeLists.txt
 
 # SDK Configurations
 sdkconfig*
