@@ -47,7 +47,7 @@ jobs:
         with:
           clean: true
       - name: Setup Python
-        uses: actions/setup-python@v6
+        run: pyenv local 3.14.3
       - name: Python Version
         run: python3 --version
       - name: Install PlatformIO Core
