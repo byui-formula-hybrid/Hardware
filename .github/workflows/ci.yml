@@ -32,7 +32,8 @@ jobs:
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 10
     env:
-      PYTHON_VERSION: 3.14.3
+      PYTHON_VERSION: "3.14.3"
+      PYENV_ROOT: "/home/manleymt/.pyenv"
 
     strategy:
       fail-fast: false
@@ -50,28 +51,34 @@ jobs:
           clean: true
       - name: Check Python Version
         run: |
-          # 1. Manually add pyenv to the PATH for this step
-          export PATH="$PYENV_ROOT/bin:$PATH"
+          # 1. Point PATH to the pyenv executable and shims
+          export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
+          
+          # 2. Initialize pyenv
           eval "$(pyenv init -)"
           
-          # 2. Force pyenv to use the specific version
-          pyenv shell ${{ env.REQ_PYTHON }}
+          # 3. Set the shell to the specific version
+          # We use the env variable defined above
+          pyenv shell ${{ env.PYTHON_VERSION }}
           
-          # 3. Perform the check
+          # 4. Perform the check
           CURRENT_VERSION=$(python3 --version)
-          EXPECTED="Python ${{ env.REQ_PYTHON }}"
+          EXPECTED="Python ${{ env.PYTHON_VERSION }}"
           
           if [[ "$CURRENT_VERSION" != "$EXPECTED" ]]; then
+            echo "------------------------------------------------"
             echo "ERROR: Version mismatch!"
             echo "Expected: $EXPECTED"
             echo "Found   : $CURRENT_VERSION"
+            echo "------------------------------------------------"
             exit 1
           fi
           
-          echo "Success: $CURRENT_VERSION"
+          echo "Success: Found $CURRENT_VERSION"
           
-          # 4. Make this version persist for subsequent steps in this job
+          # 5. Crucial: Export shims to GITHUB_PATH so REUSE is possible in next steps
           echo "$PYENV_ROOT/shims" >> $GITHUB_PATH
+          echo "$PYENV_ROOT/bin" >> $GITHUB_PATH
       - name: Install PlatformIO Core
         run: |
           python3 -m venv .venv
