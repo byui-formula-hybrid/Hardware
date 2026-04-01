@@ -54,8 +54,8 @@ jobs:
       - name: Build ESP32S3
         run: |
           source .venv/bin/activate || source .venv/Scripts/activate
-          pio ci -e ESP32S3
+          pio run -e ESP32S3
       - name: Build STM32F7
         run: |
           source .venv/bin/activate || source .venv/Scripts/activate
-          pio ci -e STM32F7
+          pio run -e STM32F7
