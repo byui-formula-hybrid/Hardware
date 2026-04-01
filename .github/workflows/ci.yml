@@ -44,8 +44,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+        with:
+          clean: true
       - name: Setup Python
         uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
       - name: Install PlatformIO Core
         run: |
           python3 -m venv .venv
@@ -54,8 +58,10 @@ jobs:
       - name: Build ESP32S3
         run: |
           source .venv/bin/activate || source .venv/Scripts/activate
-          pio run -e ESP32S3
+          pio run -e ESP32S3 -t clean -vvv
+          pio run -e ESP32S3 -vvv
       - name: Build STM32F7
         run: |
           source .venv/bin/activate || source .venv/Scripts/activate
-          pio run -e STM32F7
+          pio run -e STM32F7 -t clean -vvv
+          pio run -e STM32F7 -vvv
