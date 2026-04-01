@@ -50,6 +50,12 @@ jobs:
           clean: true
       - name: Check Python Version
         run: |
+          # To support future devices as runners, run the follow
+          # For Linux
+          # `echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc`
+          # For macOS
+          # `echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc`
+
           # 1. Dynamic Path Discovery
           # Use the system's PYENV_ROOT if set, otherwise default to $HOME/.pyenv
           TARGET_PYENV=${PYENV_ROOT:-$HOME/.pyenv}
