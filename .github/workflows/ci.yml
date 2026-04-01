@@ -33,7 +33,6 @@ jobs:
     timeout-minutes: 10
     env:
       PYTHON_VERSION: "3.14.3"
-      PYENV_ROOT: "/home/manleymt/.pyenv"
 
     strategy:
       fail-fast: false
@@ -51,34 +50,43 @@ jobs:
           clean: true
       - name: Check Python Version
         run: |
-          # 1. Point PATH to the pyenv executable and shims
-          export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
+          # 1. Dynamic Path Discovery
+          # Use the system's PYENV_ROOT if set, otherwise default to $HOME/.pyenv
+          TARGET_PYENV=${PYENV_ROOT:-$HOME/.pyenv}
           
-          # 2. Initialize pyenv
-          eval "$(pyenv init -)"
-          
-          # 3. Set the shell to the specific version
-          # We use the env variable defined above
-          pyenv shell ${{ env.PYTHON_VERSION }}
-          
-          # 4. Perform the check
+          echo "Checking for pyenv at: $TARGET_PYENV"
+
+          if [ -d "$TARGET_PYENV" ]; then
+            echo "Pyenv found. Configuring environment..."
+            
+            # Add bin and shims to the current PATH
+            export PATH="$TARGET_PYENV/bin:$TARGET_PYENV/shims:$PATH"
+            
+            # Initialize and set version
+            eval "$(pyenv init -)"
+            pyenv shell ${{ env.PYTHON_VERSION }}
+            
+            # Persist for subsequent steps in the pipeline
+            echo "$TARGET_PYENV/bin" >> $GITHUB_PATH
+            echo "$TARGET_PYENV/shims" >> $GITHUB_PATH
+          else
+            echo "Pyenv NOT found at $TARGET_PYENV. Using system Python."
+          fi
+
+          # 2. Universal Version Check (Works for both Linux and macOS)
           CURRENT_VERSION=$(python3 --version)
           EXPECTED="Python ${{ env.PYTHON_VERSION }}"
           
           if [[ "$CURRENT_VERSION" != "$EXPECTED" ]]; then
             echo "------------------------------------------------"
-            echo "ERROR: Version mismatch!"
+            echo "ERROR: Version mismatch on ${{ runner.os }}!"
             echo "Expected: $EXPECTED"
             echo "Found   : $CURRENT_VERSION"
             echo "------------------------------------------------"
             exit 1
           fi
           
-          echo "Success: Found $CURRENT_VERSION"
-          
-          # 5. Crucial: Export shims to GITHUB_PATH so REUSE is possible in next steps
-          echo "$PYENV_ROOT/shims" >> $GITHUB_PATH
-          echo "$PYENV_ROOT/bin" >> $GITHUB_PATH
+          echo "Success: Found $CURRENT_VERSION on ${{ runner.os }}"
       - name: Install PlatformIO Core
         run: |
           python3 -m venv .venv
