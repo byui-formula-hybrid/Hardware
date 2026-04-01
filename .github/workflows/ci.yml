@@ -47,15 +47,19 @@ jobs:
       - name: Cache PlatformIO tools
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.cache/pip
-            ~/.platformio/.cache
-          key: ${{ runner.os }}-pio
+          cache: pip
       - name: Setup Python
         uses: actions/setup-python@v6
       - name: Install PlatformIO Core
-        run: pip install --upgrade platformio
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate || source .venv/Scripts/activate
+          pip install --upgrade platformio
       - name: Build ESP32S3
-        run: pio ci -e ESP32S3
+        run: |
+          source .venv/bin/activate || source .venv/Scripts/activate
+          pio ci -e ESP32S3
       - name: Build STM32F7
-        run: pio ci -e STM32F7
+        run: |
+          source .venv/bin/activate || source .venv/Scripts/activate
+          pio ci -e STM32F7
