@@ -53,8 +53,6 @@ jobs:
           key: ${{ runner.os }}-pio
       - name: Setup Python
         uses: actions/setup-python@v6
-        with:
-          python-version: '3.11'
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
       - name: Build ESP32S3
