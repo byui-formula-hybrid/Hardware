@@ -48,7 +48,7 @@ jobs:
         uses: actions/setup-python@v6
       - name: Install PlatformIO Core
         run: |
-          python -m venv .venv
+          python3 -m venv .venv
           source .venv/bin/activate || source .venv/Scripts/activate
           pip install --upgrade platformio
       - name: Build ESP32S3
