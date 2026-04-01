@@ -2,8 +2,8 @@
 
 #if defined(ENV_ESP32)
 
-int main(void) {
-
+void app_main() {
+    
 }
 
 #endif // ENV_ESP32
