@@ -32,7 +32,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 10
     env:
-      PYTHON_VERSION: "3.14.3"
+      PYTHON_VERSION: 3.14.3
 
     strategy:
       fail-fast: false
@@ -51,7 +51,7 @@ jobs:
       - name: Python Version
         run: |
           CURRENT_VERSION=$(python3 --version)
-          EXPECTED="Python ${{ env.REQ_PYTHON }}"
+          EXPECTED="Python ${{ env.PYTHON_VERSION }}"
           
           if [[ "$CURRENT_VERSION" != "$EXPECTED" ]]; then
             echo "ERROR: Version mismatch!"
