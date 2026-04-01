@@ -48,8 +48,6 @@ jobs:
           clean: true
       - name: Setup Python
         uses: actions/setup-python@v6
-        with:
-          python-version: '3.x'
       - name: Python Version
         run: python3 --version
       - name: Install PlatformIO Core
