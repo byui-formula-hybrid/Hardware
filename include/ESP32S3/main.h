@@ -1,9 +1,14 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+void app_main();
 
 #ifdef __cplusplus
 }
