@@ -76,7 +76,7 @@ bool TWAIService::tear_down() {
     return true;
 }
 
-bool TWAIService::send(Frame& frame) {
+bool TWAIService::send(const Frame& frame) {
     twai_status_info_t status;
     if (get_status(status) != ESP_OK || status.state != TWAI_STATE_RUNNING) {
         return false; 
