@@ -7,7 +7,7 @@ TaskHandle_t FreeRTOSTaskController::create_task(TaskFunction_t task) {
     xReturned = xTaskCreate(task, "Task", STACK_SIZE, void, tskIDLE_PRIORITY, &xHandle);
 
     if (xReturned != pdPASS) {
-        // TODO: LOG_ERR()
+        LOG_ERR("FreeRTOSTaskController", "Failed to create task: %d", xReturned);
         vTaskDelete(identifier);
         return nullptr;
     }
