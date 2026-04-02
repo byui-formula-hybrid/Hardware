@@ -3,6 +3,9 @@
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "setup.h"
+#include "run.h"
+#include "shutdown.h"
 
 #ifdef __cplusplus
 extern "C" {
