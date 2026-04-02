@@ -1,21 +1,49 @@
 #include "setup.h"
 
-void can_setup() {
+SetupResult setup() {
+    return {
+        hardware_setup(),
+        can_setup()
+    }
+}
+
+HardwareSetupResult hardware_setup() {
+    return {};
+}
+
+CanSetupResult can_setup() {
     static TWAIService can_service;
-    can_service.setup(nullptr);
-    // TODO: Setup queues and link them to the dispatcher and transmitter
-    // CAN::Dispatcher::get_instance().set_queue();
-    // CAN::Transmitter::get_instance().set_queue();
-    CAN::Transmitter::get_instance().set_service(&can_service);
+    TWAIServiceConfig can_config = {
+        .general_config = &twai_general_config,
+        .timing_config = &twai_timing_config,
+        .filter_config = &twai_filter_config
+    };
+    can_service.setup(&can_config);
 
-    // TODO: Use something else to manage tasks. This is just temporary for testing
-    // Create the dispatch Task
-    xTaskCreate([](void*){
-        while(true) { CAN::Dispatcher::get_instance().dispatch(); }
-    }, "can_rx", 4096, nullptr, 10, nullptr);
+    FreeRTOSQueue<Frame> rx_queue(100);
+    CAN::Dispatcher dispatcher = CAN::Dispatcher::get_instance();
+    dispatcher.set_queue(&rx_queue);
 
-    // Create the transmit Task
-    xTaskCreate([](void*){
-        while(true) { CAN::Transmitter::get_instance().transmit(); }
-    }, "can_tx", 4096, nullptr, 9, nullptr);
+    FreeRTOSQueue<Frame> tx_queue(100);
+    CAN::Transmitter transmitter = CAN::Transmitter::get_instance();
+    transmitter.set_queue(&tx_queue);
+    transmitter.set_service(&can_service);
+
+    FreeRTOSTaskController controller = FreeRTOSTaskController::get_instance();
+    controller.set_max_tasks(2);
+    TaskHandle_t transmit_task_id = controller.create_task([](void*){
+        while (true) {
+            transmitter.transmit();
+        }
+    });
+    TaskHandle_t dispatch_task_id = controller.create_task([](void*){
+        while (true) {
+            dispatcher.dispatch();
+        }
+    });
+
+    return {
+        transmit_task_id,
+        dispatch_task_id
+    }
 }

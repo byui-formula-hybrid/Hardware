@@ -3,7 +3,10 @@
 #if defined(ENV_ESP32)
 
 void app_main() {
-    can_setup();
+    setup();
+    run();
+    shutdown();
+    return;
 }
 
 #endif // ENV_ESP32
