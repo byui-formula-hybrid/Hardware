@@ -1,7 +1,7 @@
 #ifndef ESP32S3_SETUP_H
 #define ESP32S3_SETUP_H
 
-#include <can.h>
+#include <core_can.h>
 #include <core/queue/FREERTOS/FREERTOS_queue.h>
 
 #include "types.h"

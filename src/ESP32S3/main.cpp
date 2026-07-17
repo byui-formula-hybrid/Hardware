@@ -1,6 +1,6 @@
-#include "main.h"
-
 #if defined(ENV_ESP32)
+
+#include "main.h"
 
 void app_main() {
     setup();

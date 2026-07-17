@@ -1,3 +1,4 @@
+#if defined(ENV_ESP32)
 #ifndef MAIN_H
 #define MAIN_H
 
@@ -18,3 +19,4 @@ void app_main();
 #endif // extern "C"
 
 #endif // MAIN_H
+#endif
