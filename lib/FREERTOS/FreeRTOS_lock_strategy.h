@@ -7,8 +7,6 @@
 
 /**
  * @brief FreeRTOS locking strategy for microcontroller use
- * 
- * This is for use to allow us to agnostically create thread-safe classes 
  */
 class FreeRTOSLockStrategy : public Core::iLockStrategy {
 public:

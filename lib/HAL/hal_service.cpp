@@ -14,7 +14,7 @@ bool HALService::setup(const void* config) {
     MX_SPI1_Init();
     MX_USART3_UART_Init();
     printf("STM32 Device started!\n");
-    
+
     // CAN will fail to initialize if a transceiver is not connected.
     printf("CAN initializing!\n");
     MX_CAN1_Init();
