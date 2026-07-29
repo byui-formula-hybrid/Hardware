@@ -25,7 +25,7 @@ public:
      * NOTE: Do not call from interrupts
      */
     bool enqueue(const T& data) override {
-        BaseType_t result = xQueueSend(queue_handle, data, portMAX_DELAY);
+        BaseType_t result = xQueueSend(queue_handle, &data, portMAX_DELAY);
         if (result != pdPASS) {
             printf("FreeRTOSQueue: Failed to enqueue data: %d\n", result);
             return false;
@@ -39,21 +39,21 @@ public:
      * @param data The data to be copied into the queue
      * @return true if successful copy of data into queue
      */
-    bool enqueueFromISR(const T data) override {
+    bool enqueueFromISR(const T& data) override {
         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
         // Use the ISR-safe FreeRTOS API
         BaseType_t result = xQueueSendFromISR(queue_handle, &data, &xHigherPriorityTaskWoken);
-        bool success = (result == pdPASS);
 
-        if (!success) {
+        if (result != pdPASS) {
             // TODO: Keep track of failed messages here
+            return false;
         } else {
             // Call this to make sure we give priority back to high priority tasks
             portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
         }
 
-        return success;
+        return true;
     }
 
     /**
@@ -63,16 +63,17 @@ public:
      * @param timeout_ms How long to try adding to the queue
      *
      * @return true if successfully dequeued item
+     *
      * NOTE: Not for use in interrupts
      */
     bool dequeue(T& data, uint32_t timeout_ms = 0) override {
         TickType_t ticks_to_wait = pdMS_TO_TICKS(timeout_ms);
         BaseType_t result = xQueueReceive(queue_handle, &data, ticks_to_wait);
-        bool success = result == pdPASS;
-        if (!success) {
+        if (result != pdPASS) {
             //printf("Failed to dequeue data: %d\n", result);
+            return false;
         }
-        return success;
+        return true;
     }
 
     /**

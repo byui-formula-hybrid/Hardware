@@ -1,3 +1,8 @@
+/**
+ * @file main.cpp
+ * @brief STM32 Main File
+ */
+
 #include "main.h"
 
 #if defined(ENV_STM32)

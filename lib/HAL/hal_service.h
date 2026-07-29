@@ -32,6 +32,7 @@ public:
      * @brief Clean up anything that should be cleaned up before the service dies
      *
      * @return true if tear down was successful
+     *
      * TODO: Should this just be the deconstructor?
      */
     bool tear_down() override;
@@ -50,10 +51,8 @@ public:
 
     /**
      * @brief Gets most recent recieved CAN Frame and queues it in the dispatcher
-     *
-     * TODO: Should return void
      */
-    const Frame* read() override;
+    const void read() override;
 
     /**
      * @brief Recovers the service into a usable state in case of error

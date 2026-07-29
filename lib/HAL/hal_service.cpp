@@ -48,7 +48,7 @@ bool HALService::send(const Frame& frame) {
     }
 };
 
-const Frame* HALService::read() {
+const void HALService::read() {
 
     uint8_t data[8];
     CAN_RxHeaderTypeDef header;

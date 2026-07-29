@@ -6,8 +6,6 @@ void FreeRTOSThread::setup(const char* name, const uint32_t priority, const uint
     m_name = name;
     m_priority = priority;
     m_attributes = attributes;
-
-    printf("Setting task name to %s\n", name);
 }
 
 uint32_t FreeRTOSThread::create(taskFunc task, void* argument) {
