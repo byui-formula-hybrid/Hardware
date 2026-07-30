@@ -1,8 +1,7 @@
+#include "can/types.h"
 #if defined(ENV_ESP32)
 
 #include "twai_service.h"
-
-using namespace CORE;
 
 // This is a link to the documentation for the ESP32 TWAI driver, which is what this service is built on top of.
 // https://docs.espressif.com/projects/esp-idf/en/v4.2/esp32/api-reference/peripherals/twai.html
@@ -11,12 +10,12 @@ bool TWAIService::setup(const void * config) {
     if (!config) return false;
 
     // 1. Validate Config Type
-    const BaseConfig* base = static_cast<const BaseConfig*>(config);
+    const CAN::BaseServiceConfig* base = static_cast<const BaseServiceConfig*>(config);
     if (base->type != ServiceConfigType::TWAI) return false;
 
     // 2. Ensure a clean state
     // We don't care if tear_down "fails," we just want the driver uninstalled.
-    tear_down(); 
+    tear_down();
 
     const TWAIConfig* twai_config = static_cast<const TWAIConfig*>(config);
 
@@ -53,7 +52,7 @@ bool TWAIService::tear_down() {
     twai_status_info_t status;
     // If the driver is not installed, twai_get_status_info returns ESP_ERR_INVALID_STATE
     if (get_status(status) == ESP_ERR_INVALID_STATE) {
-        return true; 
+        return true;
     }
 
     // 1. If we are running or recovering, we must STOP first
@@ -79,7 +78,7 @@ bool TWAIService::tear_down() {
 bool TWAIService::send(const Frame& frame) {
     twai_status_info_t status;
     if (get_status(status) != ESP_OK || status.state != TWAI_STATE_RUNNING) {
-        return false; 
+        return false;
     }
 
     twai_message_t twai_frame;
@@ -88,8 +87,8 @@ bool TWAIService::send(const Frame& frame) {
     for (int i = 0; i < frame.data_length_code; i++) {
         twai_frame.data[i] = frame.data[i];
     }
-    
-    esp_err_t result = twai_transmit(twai_frame, portMAX_DELAY);
+
+    esp_err_t result = twai_transmit(&twai_frame, portMAX_DELAY);
     if (result != ESP_OK) {
         LOG_ERR("TWAIService", "Failed to transmit TWAI frame: %d", result);
         return false;
@@ -98,10 +97,10 @@ bool TWAIService::send(const Frame& frame) {
     return true;
 }
 
-const Frame* TWAIService::read() {
+const void TWAIService::read() {
     twai_status_info_t status;
     if (get_status(status) != ESP_OK || status.state != TWAI_STATE_RUNNING) {
-        return nullptr; 
+        return;
     }
 
     twai_message_t twai_msg;
@@ -111,18 +110,20 @@ const Frame* TWAIService::read() {
         if (result != ESP_ERR_TIMEOUT) {
             LOG_ERR("TWAIService", "Failed to receive TWAI frame: %d", result);
         }
-        return nullptr;
+        return;
     }
 
     // IMPORTANT: Avoid 'Frame* frame = {};' as that is a null pointer.
-    // Use a static or member variable to return the address, or better yet, 
+    // Use a static or member variable to return the address, or better yet,
     // change the interface to 'bool read(Frame& outFrame)'.
-    static Frame frame_buffer; 
+    static Frame frame_buffer;
     frame_buffer.identifier = twai_msg.identifier;
     frame_buffer.data_length_code = twai_msg.data_length_code;
     memcpy(frame_buffer.data, twai_msg.data, twai_msg.data_length_code);
 
-    return &frame_buffer;
+    m_dispatcher->enqueue(frame_buffer);
+
+    return;
 }
 
 bool TWAIService::recover() {
@@ -160,6 +161,16 @@ bool TWAIService::recover() {
     }
 
     return true;
+}
+
+bool TWAIService::can_send() {
+    twai_status_info_t status;
+
+    if (twai_get_status_info(&status) != ESP_OK) {
+        return false;
+    }
+
+    return status.state != TWAI_STATE_RUNNING;
 }
 
 esp_err_t TWAIService::get_status(twai_status_info_t& status) {

@@ -3,8 +3,13 @@
 
 #include "core/thread.h"
 
+#if defined(ENV_ESP32)
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+#else
 #include <FreeRTOS.h>
 #include <task.h>
+#endif
 
 #define DEFAULT_STACK_SIZE 2048
 

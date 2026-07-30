@@ -2,7 +2,13 @@
 #define FREERTOS_LOCK_STRATEGY_H
 
 #include <core/lock/i_lock_strategy.h>
+
+#if defined(ENV_ESP32)
+#include <freertos/FreeRTOS.h>
+#else
 #include <FreeRTOS.h>
+#endif
+
 #include <semphr.h>
 
 /**

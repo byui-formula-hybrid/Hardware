@@ -5,8 +5,8 @@
 #include <freertos/task.h>
 
 struct CanSetupResult {
-    TaskHandle_t transmit_task_id;
-    TaskHandle_t dispatch_task_id;
+    int transmit_task_id;
+    int dispatch_task_id;
 };
 
 struct HardwareSetupResult {};

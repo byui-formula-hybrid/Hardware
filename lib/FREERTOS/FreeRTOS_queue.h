@@ -4,9 +4,16 @@
 #include <core/queue.h>
 #include <core/logger.h>
 
-#include "FreeRTOS.h"
-#include "projdefs.h"
-#include "queue.h"
+#if defined(ENV_ESP32)
+#include <freertos/FreeRTOS.h>
+#include <freertos/projdefs.h>
+#include <freertos/queue.h>
+#else
+#include <FreeRTOS.h>
+#include <projdefs.h>
+#include <queue.h>
+#endif
+
 
 template<typename T>
 class FreeRTOSQueue: public Core::IQueue<T> {
