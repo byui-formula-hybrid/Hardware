@@ -13,7 +13,9 @@ extern "C" {
 
 #endif // ENV_STM32F7
 
-// TODO: Comment
+/**
+ * This is the global error handler for the STM32 in case of any errors
+ */
 void Error_Handler(void);
 
 #endif // ENV_STM32
