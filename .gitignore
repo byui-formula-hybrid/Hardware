@@ -40,6 +40,8 @@ Desktop.ini
 # Documentation Build
 docs/_build/
 docs/build/
+docs/html/
+docs/latex/
 *.pdf
 
 # Logs & Debug Files
