@@ -16,9 +16,9 @@ bool HALService::setup(const void* config) {
     printf("STM32 Device started!\n");
 
     // CAN will fail to initialize if a transceiver is not connected.
-    printf("CAN initializing!\n");
     MX_CAN1_Init();
-    printf("CAN initialized!\n");
+
+    // Currently no need for these inits
     // MX_CAN2_Init();
     //MX_USB_OTG_FS_PCD_Init();
 
@@ -57,6 +57,13 @@ const void HALService::read() {
     }
 
     m_dispatcher->enqueue(Frame(header.StdId, data));
+}
+
+void HALService::start_listening() {
+    if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING)) {
+        LOG_ERR("HALService", "Failed to activate interrupt for hcan1\n");
+        Error_Handler();
+    }
 }
 
 bool HALService::recover() {

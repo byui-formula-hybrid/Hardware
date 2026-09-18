@@ -63,10 +63,8 @@ public:
 
     /**
      * @brief Start listening on the CAN Bus
-     *
-     * TODO: Implement this
      */
-    void start_listening() override {}
+    void start_listening() override;
 
     /**
      * @brief Stop listening on the CAN Bus

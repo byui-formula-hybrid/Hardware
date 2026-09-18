@@ -34,7 +34,7 @@ public:
     bool enqueue(const T& data) override {
         BaseType_t result = xQueueSend(queue_handle, &data, portMAX_DELAY);
         if (result != pdPASS) {
-            printf("FreeRTOSQueue: Failed to enqueue data: %d\n", result);
+            LOG_ERR("FreeRTOSQueue", "Failed to enqueue data: %d\n", result);
             return false;
         }
         return true;
@@ -77,7 +77,7 @@ public:
         TickType_t ticks_to_wait = pdMS_TO_TICKS(timeout_ms);
         BaseType_t result = xQueueReceive(queue_handle, &data, ticks_to_wait);
         if (result != pdPASS) {
-            //printf("Failed to dequeue data: %d\n", result);
+            LOG_ERR("FreeRTOSQueue", "Failed to dequeue data: %d\n", result);
             return false;
         }
         return true;

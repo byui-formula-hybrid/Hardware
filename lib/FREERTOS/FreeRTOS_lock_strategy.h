@@ -1,7 +1,8 @@
 #ifndef FREERTOS_LOCK_STRATEGY_H
 #define FREERTOS_LOCK_STRATEGY_H
 
-#include <core/lock/i_lock_strategy.h>
+#include <core/lock.h>
+#include <core/logger.h>
 
 #if defined(ENV_ESP32)
 #include <freertos/FreeRTOS.h>
@@ -26,7 +27,7 @@ public:
 
     void lock() override {
         if(xSemaphoreTake(handle, pdMS_TO_TICKS(0)) != pdPASS) {
-            printf("Unable to acquire the lock!");
+            LOG_WARN("FreeRTOSLockStrategy" ,"Unable to acquire the lock!");
         }
     }
 

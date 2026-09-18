@@ -84,12 +84,8 @@ int main(void) {
     s_taskController->setup_task("Transmitter", 1, 0);
     int transmit_id = s_taskController->create_task(new FreeRTOSThread(), Transmitter::transmit, s_transmitter);
 
-    // CAN Interrupts have to be activated after the dispatcher
-    // TODO: This should be in Service::start_listening
-    if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING)) {
-        printf("Failed to activate interrupt for hcan1\n");
-        Error_Handler();
-    }
+// Activate the CAN interrupt
+    s_service.start_listening();
 
 #ifndef PROD
     s_taskController->setup_task("Test_loop", 1, 0);
@@ -101,7 +97,7 @@ int main(void) {
     running = start_transmit_classes();
 
     if(!running) {
-        printf("Failed to start transmitters");
+        LOG_ERR("main", "Failed to start transmitters");
     }
 
     while(running){}
@@ -134,7 +130,6 @@ extern "C" void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan)
     uint8_t data[8];
 
     if(HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &header, data) != HAL_OK) {
-        //printf("CAN_RX ERROR: Failed to get message!");
         Error_Handler();
     }
 
